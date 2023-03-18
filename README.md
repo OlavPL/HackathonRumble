@@ -1,5 +1,5 @@
 # HackathonRumble
 Hackathon 2023
 
-Bruk av Library: libGdx. \n
+Bruk av Library: libGdx. 
 Logikken ligger i HackathonRumble/Core/src/
