@@ -2,8 +2,11 @@ package com.mygdx.game.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
@@ -22,7 +25,6 @@ import com.mygdx.game.entities.Player;
 import com.mygdx.game.entities.projectiles.Projectile;
 import com.mygdx.game.handlers.WorldContactListener;
 import com.mygdx.game.utils.HighScore;
-import com.mygdx.game.utils.TiledUtils;
 import com.mygdx.game.utils.Utils;
 
 import java.util.ArrayList;
@@ -50,22 +52,31 @@ public class SinglePlayerGame implements Screen {
 
     // player
     private Player player;
+    private int level = 1;
 
     //Spawners
     private ArrayList<Cobra> cobras = new ArrayList<>();
-    private final float cobraSpawnCD = 2f;
+    private float cobraSpawnCD = 3f;
     private float cobraSpawnTimer = 0;
     private ArrayList<SnakeSpawner> snakeSpawners;
     private ArrayList<Projectile> snakes;
     private float snakeSpawnTimer = 0;
-    private final float snakeSpawnCD = 1f;
+    private float snakeSpawnCD = 2f;
 
     private ArrayList<PowerUp> powers;
 
     private float powerSpawnTimer = 0;
-    private final float PowerCD = 5f;
+    private float PowerCD = 7f;
 
     private ArrayList<HighScore> scores;
+
+    // Spawns get progressively faster based on gametime / level threshold
+    private float gameTime = 0;
+    private final float LEVEL_THRESHOLD = 20;
+
+    //sound
+
+    private Music theme;
 
     public SinglePlayerGame(HackathonRumble parent){
         this.parent = parent;
@@ -84,8 +95,13 @@ public class SinglePlayerGame implements Screen {
 
         // World logic
         world = new World(new Vector2(0,0),false);
-        TiledUtils.parseTiledObjectLayer(world, map.getLayers().get("collision-layer").getObjects());
+        Utils.parseTiledObjectLayer(world, map.getLayers().get("collision-layer").getObjects());
         world.setContactListener(new WorldContactListener());
+
+        //sound
+        theme = Gdx.audio.newMusic(Gdx.files.internal("AuthenticOctopusGameGrindyourGears.mp3"));
+        theme.setLooping(true);
+        theme.play();
 
         // renderer
         sBatch = new SpriteBatch();
@@ -109,6 +125,9 @@ public class SinglePlayerGame implements Screen {
 
     private void update(float delta){
         world.step(1/60f, 6,2);
+        gameTime += delta;
+        if(gameTime>= LEVEL_THRESHOLD)
+            updateLevel();
 
         //Player
         player.addPoints(delta);
@@ -124,9 +143,10 @@ public class SinglePlayerGame implements Screen {
             spawnCobra();
             cobraSpawnTimer -= cobraSpawnCD;
         }
-        for (Cobra c : cobras) {
-            c.update(delta);
-        }
+//        for (Cobra c : cobras) {
+//            c.update(delta);
+//        }
+        Utils.iterateCobras(world, delta,cobras);
 
         snakeSpawnTimer += delta;
         // On cool down spawn snake from random spawner
@@ -245,6 +265,15 @@ public class SinglePlayerGame implements Screen {
         float posX = (float)((Math.random() * ((mapWidth-4)*tileWidth)) +tileWidth*2);
         float posY = (float)((Math.random() * ((mapHeight-4)*tileHeight)) +tileHeight*2);
         cobras.add(new Cobra(world,posX, posY, player));
+    }
+
+    private void updateLevel(){
+        level = (int)(gameTime / LEVEL_THRESHOLD);
+        cobraSpawnCD *= 0.8f;
+        snakeSpawnCD *= 0.8f;
+        PowerCD *= 1.2f;
+        gameTime = 0;
+        System.out.println("Stage Level Up");
     }
 
     @Override

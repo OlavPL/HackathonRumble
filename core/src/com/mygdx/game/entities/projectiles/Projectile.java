@@ -43,5 +43,6 @@ public abstract class Projectile {
     public void render(SpriteBatch batch){
         batch.draw(texture,x,y);
     }
+    public void setDestroy(){destroy = true;}
 
 }

@@ -36,13 +36,6 @@ public class Factories {
 
     public static Body createCircle(World world, float posX, float posY, float radius, boolean isStatic, boolean fixedRotation, boolean isSensor){
         Body bBody = createBody(world, posX, posY,isStatic, fixedRotation);
-//        BodyDef def = new BodyDef();
-//        def.type = isStatic? BodyDef.BodyType.StaticBody : BodyDef.BodyType.DynamicBody;
-//        def.fixedRotation = fixedRotation;
-//        def.position.set(posX/PPM,posY/PPM);
-
-//        bBody = world.createBody(def);
-
         CircleShape shape = new CircleShape();
         shape.setRadius(radius / PPM);
 

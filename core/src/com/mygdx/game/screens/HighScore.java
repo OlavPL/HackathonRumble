@@ -12,8 +12,9 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.mygdx.game.HackathonRumble;
 import com.mygdx.game.utils.Utils;
-
+import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Locale;
 
 import static com.mygdx.game.utils.Constants.skin;
 
@@ -21,6 +22,8 @@ public class HighScore implements Screen {
     HackathonRumble parent;
     Stage stage;
     ArrayList<com.mygdx.game.utils.HighScore> scores;
+    Locale locale = new Locale("no", "NO");
+    DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.DEFAULT, locale);
     public HighScore(HackathonRumble parent){
         this.parent = parent;
         stage = new Stage(new ScreenViewport());
@@ -47,7 +50,7 @@ public class HighScore implements Screen {
         table.add(title).fillX().uniformX();
         table.row().pad(20,0,20,0);
         for (com.mygdx.game.utils.HighScore hs : scores) {
-            table.add(new Label("Score: "+hs.getScore()+", time:"+hs.getDate(),skin)).fillX().uniformX();
+            table.add(new Label("Score: "+hs.getScore()+", time: "+dateFormat.format(hs.getDate()),skin)).fillX().uniformX();
             table.row().pad(20,0,20,0);
         }
         table.add(mainMenu).fillX().uniformX();

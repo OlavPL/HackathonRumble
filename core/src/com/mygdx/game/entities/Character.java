@@ -3,7 +3,9 @@ package com.mygdx.game.entities;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.mygdx.game.utils.Factories;
@@ -26,9 +28,16 @@ public abstract class Character {
     protected float leftMove, rightMove, upMove, downMove, xMovement, yMovement;
     protected Vector2 lastDirection = new Vector2();
 
-    //status
+    //stats
     protected float maxHealth = 10;
     protected float health = maxHealth;
+    protected float attack = 1;
+
+
+    // animation
+    protected TextureRegion[] moveLeftFrames ,moveRightFrames ,moveDownFrames, moveUpFrames;
+    protected Animation<TextureRegion> moveLeftAnim,moveRightAnim, moveDownAnim, moveUpAnim;
+    protected float stateTime;
 
     public Character(World world, float posX, float posY, int width, int height, Texture texture){
         this.world = world;
@@ -37,7 +46,8 @@ public abstract class Character {
         body = Factories.createBody(world,posX, posY,false, true);
         Factories.createFixtureDef(body, width, height,false);
         body.getFixtureList().get(0).setUserData(this);
-        this.texture = texture; //new Texture("sprites/characterSprites/SingularMouse.png");
+        this.texture = texture;
+        stateTime = 0;
     }
 
     public abstract void update(float delta);
@@ -67,14 +77,35 @@ public abstract class Character {
             setLinearVelocity(xMovement * speed, yMovement * speed);
     }
 
-    public void receiveDamage(float damage, String source){
+    public void receiveDamage(float damage){
         health-= damage;
-        System.out.println("Player took "+ (int)damage +" damage from "+ source);
     }
 
     protected void setLinearVelocity(float x, float y){
         body.setLinearVelocity(x,y);
     }
     public Vector2 getPosition(){return body.getPosition();}
+    protected TextureRegion selectFrame(){
+        TextureRegion temp =  moveRightAnim.getKeyFrame(0, true);
+        if(xMovement == 0 && yMovement == 0) {
+            temp = moveRightAnim.getKeyFrame(stateTime, true);
+        }else {
+            if(xMovement > 0 || xMovement < 0){
+
+                if( xMovement < 0 ) {
+                    temp = moveLeftAnim.getKeyFrame(stateTime, true);
+                    temp.flip(true,false);
+                }
+                else
+                    moveRightAnim.getKeyFrame(stateTime, true);
+            }
+            else {
+                if(yMovement > 0)
+                    temp =  moveUpAnim.getKeyFrame(stateTime, true);
+                moveDownAnim.getKeyFrame(stateTime, true);
+            }
+        }
+        return temp;
+    }
 
 }
