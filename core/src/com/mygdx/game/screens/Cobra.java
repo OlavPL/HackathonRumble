@@ -97,7 +97,7 @@ public class Cobra extends Character {
                 wanderCountdown = 0;
             }
         }
-        if(aggressive){
+        else if(aggressive){
 //            Get point between player and Cobra and set movement towards that point
             moveToPlayer();
         }

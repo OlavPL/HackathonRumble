@@ -206,7 +206,7 @@ public class SinglePlayerGame implements Screen {
 
 
         // Render debug view
-        debugRenderer.render(world, gameCamera.combined.scl(PPM));
+//        debugRenderer.render(world, gameCamera.combined.scl(PPM));
     }
     public void updateCamera(float delta){
         Vector3 position = gameCamera.position;
