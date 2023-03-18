@@ -1,0 +1,84 @@
+{
+    "Map/SizeTest": {
+        "height": 4300,
+        "width": 2
+    },
+    "activeFile": "ForestDesertTest.tmx",
+    "expandedProjectPaths": [
+        "CrackGauntlet/.idea",
+        ".",
+        "CrackGauntlet"
+    ],
+    "fileStates": {
+        "Cliff_tuleset.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "ForestDesertTest.tmx": {
+            "scale": 1,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": 440,
+                "y": 344
+            }
+        },
+        "Ground_Tileset.tsx": {
+            "scaleInDock": 2,
+            "scaleInEditor": 1
+        },
+        "Rocks.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "Stairs Bridge.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "Stone Path Tileset.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "Wate_Tilset.tsx": {
+            "scaleInDock": 2,
+            "scaleInEditor": 1
+        },
+        "Water Flora.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        }
+    },
+    "last.exportedFilePath": "D:/WackGauntlet/assets/maps",
+    "last.imagePath": "D:/CrackGauntlet/TileMap_PixiVanForest",
+    "map.height": 40,
+    "map.lastUsedExportFilter": "All Files (*)",
+    "map.lastUsedFormat": "tmx",
+    "map.tileHeight": 16,
+    "map.tileWidth": 16,
+    "map.width": 60,
+    "openFiles": [
+        "ForestDesertTest.tmx",
+        "Ground_Tileset.tsx",
+        "Wate_Tilset.tsx",
+        "Cliff_tuleset.tsx",
+        "Rocks.tsx",
+        "Water Flora.tsx",
+        "Stone Path Tileset.tsx",
+        "Stairs Bridge.tsx"
+    ],
+    "project": "CrackGauntlet.tiled-project",
+    "recentFiles": [
+        "Stairs Bridge.tsx",
+        "Stone Path Tileset.tsx",
+        "Water Flora.tsx",
+        "Rocks.tsx",
+        "Cliff_tuleset.tsx",
+        "Wate_Tilset.tsx",
+        "Ground_Tileset.tsx",
+        "ForestDesertTest.tmx"
+    ],
+    "tileset.lastUsedFormat": "tsx",
+    "tileset.tileSize": {
+        "height": 16,
+        "width": 16
+    }
+}
