@@ -15,6 +15,7 @@ public class Hud {
     private Viewport viewport;
     private int kills;
     private Label pointsStatus;
+    private Label lifeStatus;
 
     public Hud(SpriteBatch sBatch){
         viewport = new FitViewport(HackathonRumble.W_WIDTH, HackathonRumble.W_HEIGHT, new OrthographicCamera());
@@ -25,10 +26,14 @@ public class Hud {
         table.setFillParent(true);
 
         pointsStatus = new Label("Points "+ String.format("%03d",0), Constants.skin);
+        lifeStatus = new Label("Lives: "+ String.format("%02d",10), Constants.skin);
         table.add(pointsStatus);
+        table.row().bottom();
+        table.add(lifeStatus);
         stage.addActor(table);
     }
 
     public void updateScore(int n){pointsStatus.setText("Points "+ String.format("%03d",n));}
+    public void updateLives(int n){lifeStatus.setText("Lives: "+ String.format("%02d",n));}
 
 }

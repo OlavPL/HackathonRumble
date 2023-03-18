@@ -132,6 +132,7 @@ public class SinglePlayerGame implements Screen {
         //Player
         player.addPoints(delta);
         hud.updateScore((int)player.getPoints());
+        hud.updateLives((int)player.getHealth());
         player.update(delta);
         if(player.getHealth() <=0)
             endGame();
@@ -223,6 +224,7 @@ public class SinglePlayerGame implements Screen {
         sBatch.dispose();
         tmrenderer.dispose();
         map.dispose();
+        theme.dispose();
 
         player.getTexture().dispose();
         for(Projectile p :player.getProjectiles()){
@@ -305,5 +307,6 @@ public class SinglePlayerGame implements Screen {
         // Serialize if score is good enough
         Utils.serialize(scores, (int) player.getPoints());
         parent.changeScreen(ScreenType.HIGH_SCORE);
+        theme.stop();
     }
 }
