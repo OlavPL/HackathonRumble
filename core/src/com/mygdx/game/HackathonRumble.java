@@ -2,10 +2,10 @@ package com.mygdx.game;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Screen;
-import com.mygdx.game.screens.HighScore;
-import com.mygdx.game.screens.MenuScreen;
-import com.mygdx.game.screens.ScreenType;
-import com.mygdx.game.screens.SinglePlayerGame;
+import com.mygdx.game.entities.screens.HighScore;
+import com.mygdx.game.entities.screens.MenuScreen;
+import com.mygdx.game.entities.screens.ScreenType;
+import com.mygdx.game.entities.screens.SinglePlayerGame;
 import lombok.Getter;
 import lombok.Setter;
 

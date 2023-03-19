@@ -1,34 +1,24 @@
-package com.mygdx.game.screens;
+package com.mygdx.game.entities.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.mygdx.game.HackathonRumble;
-import com.mygdx.game.utils.Utils;
-import java.text.DateFormat;
-import java.util.ArrayList;
-import java.util.Locale;
 
 import static com.mygdx.game.utils.Constants.skin;
 
-public class HighScore implements Screen {
+public class MenuScreen implements Screen {
     HackathonRumble parent;
     Stage stage;
-    ArrayList<com.mygdx.game.utils.HighScore> scores;
-    Locale locale = new Locale("no", "NO");
-    DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.DEFAULT, locale);
-    public HighScore(HackathonRumble parent){
+    public MenuScreen(HackathonRumble parent){
         this.parent = parent;
         stage = new Stage(new ScreenViewport());
-        scores = Utils.deSerialize();
-
     }
 
 
@@ -43,27 +33,37 @@ public class HighScore implements Screen {
         table.setFillParent(true);
         stage.addActor(table);
 
-        Label title = new Label("Top 5 High Scores",skin);
+        TextButton singlePlayerGame = new TextButton("New Singleplayer Game",skin);
+        TextButton exitGame = new TextButton("Exit Game", skin);
+        TextButton gameEnd = new TextButton("High Scores", skin);
 
-        TextButton mainMenu = new TextButton("Main Menu",skin);
-
-        table.add(title).fillX().uniformX();
+        table.add(singlePlayerGame).fillX().uniformX();
         table.row().pad(20,0,20,0);
-        for (com.mygdx.game.utils.HighScore hs : scores) {
-            table.add(new Label("Score: "+hs.getScore()+", time: "+dateFormat.format(hs.getDate()),skin)).fillX().uniformX();
-            table.row().pad(20,0,20,0);
-        }
-        table.add(mainMenu).fillX().uniformX();
+        table.add(gameEnd).fillX().uniformX();
+        table.row().pad(20,0,20,0);
+        table.add(exitGame).fillX().uniformX();
 
         stage.getViewport().update(HackathonRumble.W_WIDTH, HackathonRumble.W_HEIGHT,true);
 
-        mainMenu.addListener(new ChangeListener() {
+        singlePlayerGame.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                parent.changeScreen(ScreenType.MENUSCREEN);
+                parent.changeScreen(ScreenType.SINGLEPLAYER_GAME);
+            }
+        });
+        exitGame.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                Gdx.app.exit();
             }
         });
 
+        gameEnd.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                parent.changeScreen(ScreenType.HIGH_SCORE);
+            }
+        });
     }
 
     @Override

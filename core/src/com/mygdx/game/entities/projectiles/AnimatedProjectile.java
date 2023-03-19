@@ -41,4 +41,8 @@ public abstract class AnimatedProjectile extends Projectile{
                 body.getPosition().y * Constants.PPM - HEIGHT/2
         );
     }
+    @Override
+    public void dispose(){
+        texture.dispose();
+    }
 }

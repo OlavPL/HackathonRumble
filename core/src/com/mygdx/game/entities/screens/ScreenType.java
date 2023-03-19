@@ -1,4 +1,4 @@
-package com.mygdx.game.screens;
+package com.mygdx.game.entities.screens;
 
 public enum ScreenType {
     MENUSCREEN, SINGLEPLAYER_GAME, MULTIPLAYER_GAME, HIGH_SCORE

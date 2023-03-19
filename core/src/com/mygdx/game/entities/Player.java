@@ -6,6 +6,7 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.mygdx.game.entities.projectiles.PlayerProjectile;
@@ -24,16 +25,23 @@ import static com.mygdx.game.utils.Constants.TILE_SIZE;
 @Getter
 public class Player extends Character implements InputProcessor {
 
-    protected final static int WIDTH = 12;
-    protected final static int HEIGHT = 16;
+    protected final static int WIDTH = 16;
+    protected final static int HEIGHT = 13;
     private final static Texture  shieldTexture = new Texture("sprites/playerShield.png");
-    private final static Texture  texture = new Texture("sprites/characterSprites/SingularMouse.png");
+//    private final static Texture  spriteSheet = new Texture("sprites/characterSprites/mouseWalk.png");
+    private final static TextureRegion  singularMouse = new TextureRegion(
+            new Texture("sprites/characterSprites/SingularMouse.png")
+    );
+    protected final float TEXTURE_OFFSET = 0f;
 
     //Projectiles / attacks
     private ArrayList<Projectile> projectiles = new ArrayList<>();
 
+    //movement
+    protected float leftMove, rightMove, upMove, downMove, xMovement, yMovement;
+
     // status
-    float maxHealth = 10;
+    float maxHealth = 100;
     float health = maxHealth;
     float points = 0;
     boolean isShielded = false;
@@ -46,12 +54,16 @@ public class Player extends Character implements InputProcessor {
 
 
     public Player(World world, float posX, float posY){
-        super(world, posX, posY, WIDTH, HEIGHT,texture);
+        super(world, posX, posY, WIDTH, HEIGHT,new Texture("sprites/characterSprites/mouseWalk.png"),3,4);
+//        currentFrame = new TextureRegion(singularMouse);
     }
 
     // Update loop for player related stuff, uses world delta
+    @Override
     public void update(float delta){
+        stateTime += delta;
         updateMovement();
+
         shootCDR += delta;
         if (shootCDR >= shootCD) {
             shootCDR -= shootCD;
@@ -60,13 +72,19 @@ public class Player extends Character implements InputProcessor {
 
         // Update player projcetiles
         Utils.iterateProjectiles(world, delta, projectiles);
+
+        if(body.getLinearVelocity().isZero())
+            currentFrame = singularMouse;
+        else
+            currentFrame = selectFrame();
     }
 
+    @Override
     public void render(SpriteBatch batch){
         //draw player and projectiles
-        batch.draw(texture,getPosition().x * PPM - texture.getWidth()/2 - TEXTUREOFFSET, getPosition().y * PPM - texture.getHeight()/2);
+        batch.draw(currentFrame,getPosition().x * PPM - WIDTH/2 - TEXTURE_OFFSET, getPosition().y * PPM - HEIGHT/2);
         if(isShielded)
-            batch.draw(shieldTexture,getPosition().x * PPM - texture.getWidth()/2 , getPosition().y * PPM - texture.getHeight()/2);
+            batch.draw(shieldTexture,getPosition().x * PPM - shieldTexture.getWidth()/2 , getPosition().y * PPM - shieldTexture.getHeight()/2);
 
         for (Projectile p: projectiles) {
             p.render(batch);
@@ -106,6 +124,29 @@ public class Player extends Character implements InputProcessor {
         }
 
         return false;
+    }
+    protected void updateMovement(){
+        xMovement = 0;
+        yMovement = 0;
+        if(Gdx.input.isKeyPressed(Input.Keys.A)){
+            xMovement -= 1;
+        }
+        if(Gdx.input.isKeyPressed(Input.Keys.D)){
+            xMovement += 1;
+        }
+        if(Gdx.input.isKeyPressed(Input.Keys.W)){
+            yMovement += 1;
+        }
+        if(Gdx.input.isKeyPressed(Input.Keys.S)){
+            yMovement -= 1;
+        }
+
+
+        if(xMovement !=0 && yMovement!= 0){
+            setLinearVelocity((float)(xMovement * speed * DIAGONAL_MULTI) , (float)(yMovement * speed * DIAGONAL_MULTI));
+        }
+        else
+            setLinearVelocity(xMovement * speed, yMovement * speed);
     }
 
     @Override
@@ -183,7 +224,7 @@ public class Player extends Character implements InputProcessor {
         if(y < Constants.TILE_SIZE*2 || y > Constants.MAP_HEIGHT * TILE_SIZE - TILE_SIZE )
             return;
 
-        thud.play();
+        thud.play(.6f);
         System.out.println("x: "+x+", y: "+y);
         projectiles.add(new PlayerProjectile(
                 world, 40,20, x, y, new Vector2(dir.x,dir.y)

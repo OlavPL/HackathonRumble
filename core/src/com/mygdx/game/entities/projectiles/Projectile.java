@@ -44,5 +44,6 @@ public abstract class Projectile {
         batch.draw(texture,x,y);
     }
     public void setDestroy(){destroy = true;}
+    public abstract void dispose();
 
 }

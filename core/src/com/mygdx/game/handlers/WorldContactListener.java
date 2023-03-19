@@ -6,7 +6,7 @@ import com.mygdx.game.entities.Player;
 import com.mygdx.game.entities.projectiles.PlayerProjectile;
 import com.mygdx.game.entities.projectiles.Projectile;
 import com.mygdx.game.entities.projectiles.Snake;
-import com.mygdx.game.screens.Cobra;
+import com.mygdx.game.entities.Cobra;
 
 public class WorldContactListener implements ContactListener {
 
@@ -25,14 +25,14 @@ public class WorldContactListener implements ContactListener {
             Cobra cobra = (Cobra) cobraf.getUserData();
             Player player = (Player) playerf.getUserData();
             if(cobraf.isSensor()){
-                if(cobra.isWandering())
+                if(cobra.isRetreating())
                     return;
 
                 cobra.setAggressive();
             }
             else {
                 player.receiveDamage(cobra.getAttack());
-                cobra.wander();
+                cobra.retreat();
             }
             return;
         }
@@ -74,7 +74,6 @@ public class WorldContactListener implements ContactListener {
 
     @Override
     public void preSolve(Contact contact, Manifold oldManifold) {
-
     }
 
     @Override
@@ -105,5 +104,4 @@ public class WorldContactListener implements ContactListener {
         }
         return false;
     }
-
 }

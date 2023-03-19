@@ -1,12 +1,10 @@
-package com.mygdx.game.screens;
+package com.mygdx.game.entities.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
@@ -16,6 +14,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.ScreenUtils;
+import com.mygdx.game.entities.Cobra;
 import com.mygdx.game.entities.Pickup.PPHeal;
 import com.mygdx.game.entities.Pickup.PPShield;
 import com.mygdx.game.entities.Pickup.PowerUp;
@@ -72,7 +71,7 @@ public class SinglePlayerGame implements Screen {
 
     // Spawns get progressively faster based on gametime / level threshold
     private float gameTime = 0;
-    private final float LEVEL_THRESHOLD = 20;
+    private final float LEVEL_THRESHOLD = 30;
 
     //sound
 
@@ -80,7 +79,7 @@ public class SinglePlayerGame implements Screen {
 
     public SinglePlayerGame(HackathonRumble parent){
         this.parent = parent;
-        scores = Utils.deSerialize();
+        scores = HighScore.deSerialize();
 
         //TiledMap
         map = new TmxMapLoader().load("map/Arena1.tmx");
@@ -130,29 +129,32 @@ public class SinglePlayerGame implements Screen {
             updateLevel();
 
         //Player
-        player.addPoints(delta);
-        hud.updateScore((int)player.getPoints());
-        hud.updateLives((int)player.getHealth());
         player.update(delta);
         if(player.getHealth() <=0)
             endGame();
+        player.addPoints(delta);
+        hud.updateScore((int)player.getPoints());
+        hud.updateLives((int)player.getHealth());
+
+
 
         //Spawners
         cobraSpawnTimer += delta;
-        // On cool down spawn Cobra from random spawner
+//         On cool down spawn Cobra from random spawner
         if(cobraSpawnTimer >= cobraSpawnCD){
             spawnCobra();
             cobraSpawnTimer -= cobraSpawnCD;
         }
-//        for (Cobra c : cobras) {
-//            c.update(delta);
-//        }
         Utils.iterateCobras(world, delta,cobras);
 
-        snakeSpawnTimer += delta;
+        for (SnakeSpawner spawner : snakeSpawners) {
+            spawner.update(delta);
+        }
+
+
         // On cool down spawn snake from random spawner
         if(snakeSpawnTimer >= snakeSpawnCD){
-            snakes.add(snakeSpawners.get( (int)(Math.random() * (snakeSpawners.size() )) ).spawnSnake(world));
+//            snakes.add(snakeSpawners.get( (int)(Math.random() * (snakeSpawners.size()))).getNewSnake(world));
             snakeSpawnTimer -= snakeSpawnCD;
         }
         Utils.iterateProjectiles(world,delta, snakes);
@@ -165,15 +167,16 @@ public class SinglePlayerGame implements Screen {
             powerSpawnTimer -= powerSpawnTimer;
         }
 
-        //Update camera for render
-        tmrenderer.setView(gameCamera);
-        updateCamera(delta);
+
     }
 
     @Override
     public void render(float delta) {
 //      run update logic
         update(delta);
+        //Update camera for rendering game related stuff
+        tmrenderer.setView(gameCamera);
+        updateCamera();
 
 //      clear screen before rerender
         ScreenUtils.clear(0, 0, 0, 1);
@@ -192,23 +195,23 @@ public class SinglePlayerGame implements Screen {
             for (Cobra c : cobras) {
                 c.render(sBatch);
             }
-            for(Projectile b : snakes){
-                b.render(sBatch);
+            for (SnakeSpawner spawner : snakeSpawners) {
+                spawner.render(sBatch);
             }
             for(PowerUp pp : powers){
                 pp.render(sBatch);
             }
         sBatch.end();
 
-        //Render Hud
+        //set view and Render Hud
         sBatch.setProjectionMatrix(hud.stage.getCamera().combined);
         hud.stage.draw();
 
 
         // Render debug view
-        debugRenderer.render(world, gameCamera.combined.scl(PPM));
+//        debugRenderer.render(world, gameCamera.combined.scl(PPM));
     }
-    public void updateCamera(float delta){
+    public void updateCamera(){
         Vector3 position = gameCamera.position;
         position.x = player.getPosition().x * PPM;
         position.y = player.getPosition().y * PPM;
@@ -226,15 +229,15 @@ public class SinglePlayerGame implements Screen {
         map.dispose();
         theme.dispose();
 
-        player.getTexture().dispose();
+        player.getSpriteSheet().dispose();
         for(Projectile p :player.getProjectiles()){
             p.getTexture().dispose();
         }
-        for(Projectile b : snakes){
-            b.getTexture().dispose();
-        }
         for(PowerUp pp : powers){
             pp.getTexture().dispose();
+        }
+        for(SnakeSpawner spawner : snakeSpawners){
+            spawner.dispose();
         }
     }
 
@@ -252,12 +255,12 @@ public class SinglePlayerGame implements Screen {
         float posX = (float)((Math.random() * ((mapWidth-4)*tileWidth)) +tileWidth*2);
         float posY = (float)((Math.random() * ((mapHeight-4)*tileHeight)) +tileHeight*2);
         int id = (int)(Math.random()*2);
-        switch (id){
-            case 0:{
+        switch (id) {
+            case 0 : {
                 powers.add(new PPHeal(world, "HealingCheese", posX, posY));
                 break;
             }
-            case 1:{
+            case 1 : {
                 powers.add(new PPShield(world, "ShieldingCheese", posX, posY));
                 break;
             }
@@ -273,6 +276,11 @@ public class SinglePlayerGame implements Screen {
         level = (int)(gameTime / LEVEL_THRESHOLD);
         cobraSpawnCD *= 0.8f;
         snakeSpawnCD *= 0.8f;
+        for (SnakeSpawner spawner : snakeSpawners){
+            spawner.setSpawnCDMax(spawner.getSpawnCDMax() * 0.8f);
+            spawner.setSpawnCDMin(spawner.getSpawnCDMin() * 0.8f);
+        }
+
         PowerCD *= 1.2f;
         gameTime = 0;
         System.out.println("Stage Level Up");
@@ -305,7 +313,7 @@ public class SinglePlayerGame implements Screen {
 
     private void endGame(){
         // Serialize if score is good enough
-        Utils.serialize(scores, (int) player.getPoints());
+        HighScore.serialize(scores, (int) player.getPoints());
         parent.changeScreen(ScreenType.HIGH_SCORE);
         theme.stop();
     }
