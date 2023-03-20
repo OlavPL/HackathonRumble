@@ -1,4 +1,4 @@
-package com.mygdx.game.entities.screens;
+package com.mygdx.game.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
@@ -67,7 +67,7 @@ public class SinglePlayerGame implements Screen {
     private float powerSpawnTimer = 0;
     private float PowerCD = 7f;
 
-    private ArrayList<HighScore> scores;
+    private HighScore[] scores;
 
     // Spawns get progressively faster based on gametime / level threshold
     private float gameTime = 0;
@@ -79,7 +79,7 @@ public class SinglePlayerGame implements Screen {
 
     public SinglePlayerGame(HackathonRumble parent){
         this.parent = parent;
-        scores = HighScore.deSerialize();
+        scores = HighScore.deSerialize(true);
 
         //TiledMap
         map = new TmxMapLoader().load("map/Arena1.tmx");

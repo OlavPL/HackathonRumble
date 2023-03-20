@@ -1,4 +1,4 @@
-package com.mygdx.game.entities.screens;
+package com.mygdx.game.screens;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;

@@ -1,24 +1,34 @@
-package com.mygdx.game.entities.screens;
+package com.mygdx.game.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.mygdx.game.HackathonRumble;
+import java.text.DateFormat;
+import java.util.Arrays;
+import java.util.Locale;
 
 import static com.mygdx.game.utils.Constants.skin;
 
-public class MenuScreen implements Screen {
+public class HighScore implements Screen {
     HackathonRumble parent;
     Stage stage;
-    public MenuScreen(HackathonRumble parent){
+    com.mygdx.game.utils.HighScore[] scores;
+    Locale locale = new Locale("no", "NO");
+    DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.DEFAULT, locale);
+    public HighScore(HackathonRumble parent){
         this.parent = parent;
         stage = new Stage(new ScreenViewport());
+        scores = com.mygdx.game.utils.HighScore.deSerialize(false);
+        System.out.println(Arrays.toString(scores));
+
     }
 
 
@@ -33,37 +43,27 @@ public class MenuScreen implements Screen {
         table.setFillParent(true);
         stage.addActor(table);
 
-        TextButton singlePlayerGame = new TextButton("New Singleplayer Game",skin);
-        TextButton exitGame = new TextButton("Exit Game", skin);
-        TextButton gameEnd = new TextButton("High Scores", skin);
+        Label title = new Label("Top 5 High Scores",skin);
 
-        table.add(singlePlayerGame).fillX().uniformX();
+        TextButton mainMenu = new TextButton("Main Menu",skin);
+
+        table.add(title).fillX().uniformX();
         table.row().pad(20,0,20,0);
-        table.add(gameEnd).fillX().uniformX();
-        table.row().pad(20,0,20,0);
-        table.add(exitGame).fillX().uniformX();
+        for (com.mygdx.game.utils.HighScore hs : scores) {
+            table.add(new Label("Score: "+hs.getScore()+", time: "+dateFormat.format(hs.getDate()),skin)).fillX().uniformX();
+            table.row().pad(20,0,20,0);
+        }
+        table.add(mainMenu).fillX().uniformX();
 
         stage.getViewport().update(HackathonRumble.W_WIDTH, HackathonRumble.W_HEIGHT,true);
 
-        singlePlayerGame.addListener(new ChangeListener() {
+        mainMenu.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                parent.changeScreen(ScreenType.SINGLEPLAYER_GAME);
-            }
-        });
-        exitGame.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                Gdx.app.exit();
+                parent.changeScreen(ScreenType.MENUSCREEN);
             }
         });
 
-        gameEnd.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                parent.changeScreen(ScreenType.HIGH_SCORE);
-            }
-        });
     }
 
     @Override

@@ -41,7 +41,7 @@ public class Player extends Character implements InputProcessor {
     protected float leftMove, rightMove, upMove, downMove, xMovement, yMovement;
 
     // status
-    float maxHealth = 100;
+    float maxHealth = 50;
     float health = maxHealth;
     float points = 0;
     boolean isShielded = false;

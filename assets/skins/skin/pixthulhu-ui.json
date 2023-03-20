@@ -90,7 +90,9 @@ com.badlogic.gdx.scenes.scene2d.ui.Skin$TintedDrawable: {
 			b: 0.2509804
 			a: 1
 		}
-	}
+	},
+	tooltip: { name: white, color: white },
+
 }
 com.badlogic.gdx.scenes.scene2d.ui.Button$ButtonStyle: {
 	default: {
@@ -240,11 +242,9 @@ com.badlogic.gdx.scenes.scene2d.ui.TextField$TextFieldStyle: {
 		selection: shadow
 	}
 }
-com.badlogic.gdx.scenes.scene2d.ui.TextTooltip$TextTooltipStyle: {
-	default: {
-		label: default
-	}
-}
+	com.badlogic.gdx.scenes.scene2d.ui.TextTooltip$TextTooltipStyle: {
+		default: { label: default, background: tooltip }
+	},
 com.badlogic.gdx.scenes.scene2d.ui.Touchpad$TouchpadStyle: {
 	default: {
 		background: touchpad

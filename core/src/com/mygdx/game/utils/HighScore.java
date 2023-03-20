@@ -3,10 +3,7 @@ package com.mygdx.game.utils;
 import lombok.Getter;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Comparator;
-import java.util.Date;
+import java.util.*;
 
 @Getter
 public class HighScore implements Serializable, Comparable<HighScore> {
@@ -19,36 +16,27 @@ public class HighScore implements Serializable, Comparable<HighScore> {
     }
     @Override
     public int compareTo(HighScore o) {
-        return score - o.score;
+        return o.score - score;
     }
 
-    public static void serialize(ArrayList<HighScore> scores, int points){
-        if(scores.size() >=5 ){
-            scores.sort(new Comparator<HighScore>() {
-                @Override
-                public int compare(HighScore o1, HighScore o2) {
-                    return o2.getScore() - o1.getScore();
-                }
-            });
-            if(points > scores.get(scores.size()-1).getScore()) {
-                scores.remove(scores.size() - 1);
-                scores.add(new HighScore(points));
-                scores.sort(new Comparator<HighScore>() {
-                    @Override
-                    public int compare(HighScore o1, HighScore o2) {
-                        return o2.getScore() - o1.getScore();
-                    }
-                });
-            }
+    public static void serialize(HighScore[] scores_in, int points){
+        QuickSortGeneric<HighScore> sortGeneric = new QuickSortGeneric<>();
+        HighScore[] scores = scores_in;
+        if(scores.length >5 ){
+                scores[scores.length-1] = new HighScore(points);
+            sortGeneric.quickSort(scores);
         }
         else {
-            scores.add(new HighScore(points));
-            scores.sort(new Comparator<HighScore>() {
-                @Override
-                public int compare(HighScore o1, HighScore o2) {
-                    return o2.getScore() - o1.getScore();
-                }
-            });
+            if(scores.length == 1)
+                scores[0] = new HighScore(points);
+            else {
+                HighScore[] newScore = new HighScore[scores.length];
+                System.arraycopy(scores, 0, newScore, 0, scores.length);
+                newScore[scores.length-1] = new HighScore(points);
+                scores = newScore;
+                System.out.println(Arrays.toString(scores));
+                sortGeneric.quickSort(scores);
+            }
         }
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(Constants.SCORE_FILE_PATH))){
             oos.writeObject(scores);
@@ -57,13 +45,22 @@ public class HighScore implements Serializable, Comparable<HighScore> {
         }
     }
 
-    public static ArrayList<HighScore> deSerialize(){
+    public static HighScore[] deSerialize(boolean extend){
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(Constants.SCORE_FILE_PATH))){
-            return (ArrayList<HighScore>) ois.readObject();
+            HighScore[] score = (HighScore[]) ois.readObject();
+            if (score.length<5){
+                if(extend) {
+                    HighScore[] newScore = new HighScore[score.length + 1];
+                    System.arraycopy(score, 0, newScore, 0, score.length);
+                    score = newScore;
+                }
+            }
+            return score;
         } catch (IOException | ClassNotFoundException fileNotFoundException) {
             fileNotFoundException.printStackTrace();
+            return new HighScore[1];
         }
-        return new ArrayList<>();
     }
+
 }
 
