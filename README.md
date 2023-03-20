@@ -1,7 +1,7 @@
 # HackathonRumble
 A kind of rougelike / endeless survival game
 
-Project I made for local 24 hour Hackathon in 2023
+Project I made for local 24 hour Hackathon in 2023\
 Note: i fixed animation for movement directions post delivery
 
 The amazing background/ world sprites by PixiVan\
