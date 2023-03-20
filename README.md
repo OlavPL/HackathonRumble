@@ -13,5 +13,5 @@ Animal sprites by Kacper Woźniak - Tiny Tiny Heroes\
 https://thkaspar.itch.io/tth-animals
 Copyright Creative Commons
 
+![Damn, cant fint the gameplay screenshot](https://github.com/OlavPL/HackathonRumble/blob/assets/ThumbnailHackathonrumble.PNG)
 
-![Damn, cant fint the gameplay screenshot](https://github.com/OlavPL/HackathonRumble/blob/master/assets/ThumbnailHackathonrumble.PNG?raw=true)
