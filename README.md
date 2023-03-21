@@ -1,7 +1,7 @@
 # HackathonRumble
 A kind of rougelike / endeless survival game
 
-Keybinds:  movement-> movement &  shoot-> space  
+Keybinds:  movement-> WASD &  shoot-> space  
 
 Project I made for local 24 hour Hackathon in 2023\
 Note: i fixed animation for movement directions post delivery
